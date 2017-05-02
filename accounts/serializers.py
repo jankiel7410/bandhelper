@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -24,3 +25,18 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class SessionSerializer(serializers.Serializer):
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        self.user = authenticate(**attrs)
+        if not self.user:
+            raise serializers.ValidationError('You entered incorrect username or password')
+        return attrs
+
+    def create(self, validated_data):
+        login(self.context['request'], self.user)
+        return self.user
