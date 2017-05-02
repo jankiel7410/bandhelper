@@ -25,7 +25,7 @@ SECRET_KEY = '&l+9pn6ezdm#lrgz39sebf35==526&o@f4*u3t5ct6$mgh%ng='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'localhost:3000', 'localhost:8000', b'bandhelper.jankiel.me', b'www.bandhelper.jankiel.me', ]
+ALLOWED_HOSTS = ['localhost', 'localhost:3000', 'localhost:8000', 'bandhelper.jankiel.me', 'www.bandhelper.jankiel.me', ]
 
 
 # Application definition
