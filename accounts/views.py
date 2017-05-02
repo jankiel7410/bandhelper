@@ -14,7 +14,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = serializers.SessionSerializer
-    http_method_names = ['post']
+    http_method_names = ['options', 'post']
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
