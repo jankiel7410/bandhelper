@@ -5,11 +5,13 @@ from rest_framework.response import Response
 
 from accounts import models
 from accounts import serializers
+from boards.permissions import IsAuthenticatedOrReadOnly, IsPoster
 
 
 class VoteViewSet(viewsets.ModelViewSet):
     queryset = models.Vote.objects.all()
     serializer_class = serializers.VoteSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, IsPoster,)
 
     def get_serializer_context(self):
         return {'user': self.request.user}
