@@ -2,6 +2,8 @@ from django.contrib.auth import authenticate, login
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+from accounts.models import Vote
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -40,3 +42,19 @@ class SessionSerializer(serializers.Serializer):
     def create(self, validated_data):
         login(self.context['request'], self.user)
         return self.user
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Vote
+        fields = ('user', 'song', 'score', )
+
+    def validate_score(self, score: int):
+        if score > 5 or score <= 0:
+            raise serializers.ValidationError("Score must be between 1 and 5")
+        return score
+
+    def save(self, **kwargs):
+        kwargs['user_id'] = self.context['user'].id
+        return super().save(**kwargs)

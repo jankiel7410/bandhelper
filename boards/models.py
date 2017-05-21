@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from django.db import models
 # Create your models here.
 
@@ -20,3 +22,12 @@ class Song(models.Model):
     link = models.URLField()
     poster = models.ForeignKey('auth.User', related_name='posted_songs')
     description = models.TextField(max_length=2000, blank=True, null=True)
+
+    @property
+    @lru_cache(maxsize=128)
+    def score(self):
+        res = self.votes.aggregate(models.Avg('score'))
+        return res['score__avg'] or 0
+
+    def __str__(self):
+        return 'Song #{}: {}'.format(self.id, self.link)

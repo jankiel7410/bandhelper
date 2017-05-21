@@ -3,7 +3,16 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
+from accounts import models
 from accounts import serializers
+
+
+class VoteViewSet(viewsets.ModelViewSet):
+    queryset = models.Vote.objects.all()
+    serializer_class = serializers.VoteSerializer
+
+    def get_serializer_context(self):
+        return {'user': self.request.user}
 
 
 class UserViewSet(viewsets.ModelViewSet):

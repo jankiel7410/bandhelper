@@ -4,10 +4,10 @@ from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 from accounts import views
 
-
 router = routers.DefaultRouter()
 router.register('users', views.UserViewSet)
 router.register('sessions', views.SessionViewSet)
+router.register('votes', views.VoteViewSet)
 
 urlpatterns = []
 
