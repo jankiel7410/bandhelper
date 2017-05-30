@@ -23,4 +23,4 @@ class BoardViewSet(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticatedOrReadOnly, IsPoster, )
 
     def get_object(self):
-        return self.get_queryset().filter(user_id=self.kwargs['id']).first()
+        return self.get_queryset().filter(admin_id=self.kwargs['pk']).first()
