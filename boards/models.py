@@ -34,6 +34,7 @@ class List(models.Model):
 
 
 class Song(models.Model):
+    title = models.CharField(max_length=200)
     link = models.URLField()
     description = models.TextField(max_length=2000, blank=True, null=True)
     poster = models.ForeignKey('auth.User', related_name='posted_songs')
