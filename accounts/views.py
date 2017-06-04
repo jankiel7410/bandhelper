@@ -1,17 +1,18 @@
 from django.contrib.auth.models import User
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
 from accounts import models
 from accounts import serializers
-from boards.permissions import IsAuthenticatedOrReadOnly, IsPoster
+from boards.permissions import IsAuthenticatedOrReadOnly, IsPosterOrAdmin
 
 
 class VoteViewSet(viewsets.ModelViewSet):
     queryset = models.Vote.objects.all()
     serializer_class = serializers.VoteSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, IsPoster,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_serializer_context(self):
         return {'user': self.request.user}
@@ -20,6 +21,8 @@ class VoteViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
+    filter_backends = (DjangoFilterBackend, )
+    filter_fields = ['username', ]
 
 
 class SessionViewSet(viewsets.mixins.CreateModelMixin, viewsets.GenericViewSet):

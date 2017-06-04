@@ -1,9 +1,22 @@
 from rest_framework.permissions import *
 
 
-class IsPoster(BasePermission):
-    def has_object_permission(self, request, view, obj):
+class IsPosterOrAdmin(BasePermission):
+    def has_object_permission(self, request, view, song):
         if request.method in ['GET', 'OPTIONS', ]:
             return True
         else:
-            return request.user.id == obj.poster_id
+            is_poster = request.user.id == song.poster_id
+            if is_poster:
+                return True
+            is_admin = request.user.id == song.list.board.admin_id
+            return is_admin
+
+
+class IsAdmin(BasePermission):
+
+    def has_object_permission(self, request, view, song):
+        if request.method in ['GET', 'OPTIONS', ]:
+            return True
+
+        return request.user.id == song.list.board.admin_id

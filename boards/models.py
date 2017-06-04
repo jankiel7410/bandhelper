@@ -6,11 +6,16 @@ from django.dispatch import receiver
 # Create your models here.
 
 
+class BoardMembership(models.Model):
+    user = models.ForeignKey('auth.User', related_name='board_memberships')
+    board = models.ForeignKey('boards.Board', related_name='board_memberships')
+
+
 class Board(models.Model):
     admin = models.ForeignKey('auth.User', related_name='boards')
     name = models.CharField(max_length=30)
     moderators = models.ManyToManyField('auth.User', related_name='moderated_boards')
-    members = models.ManyToManyField('auth.User', related_name='shared_boards')
+    members = models.ManyToManyField('auth.User', related_name='shared_boards', through=BoardMembership)
     votes_count_threshold = models.PositiveSmallIntegerField(default=1)
 
     def get_lists(self):
@@ -35,7 +40,7 @@ class List(models.Model):
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
-    link = models.URLField()
+    link = models.URLField(blank=True, null=True)
     description = models.TextField(max_length=2000, blank=True, null=True)
     poster = models.ForeignKey('auth.User', related_name='posted_songs')
     list = models.ForeignKey('boards.List', related_name='songs')
