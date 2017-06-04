@@ -34,7 +34,7 @@ class List(models.Model):
         if not self.id:
             current_max = List.objects.filter(board_id=self.board_id).aggregate(models.Max('position'))
             pos = 0 if current_max['position__max'] is None else current_max['position__max']
-            self.position = pos
+            self.position = pos + 1
         super().save(force_insert, force_update, using, update_fields)
 
 
@@ -62,8 +62,8 @@ def setup_default_board(sender, instance, created, **kwargs):
     user = instance
     b = Board(admin=user, name='My board')
     b.save()
-    lists = (List(name='Propositions', board=b),
-             List(name='To try', board=b),
-             List(name='Accepted', board=b),
+    lists = (List(name='Propositions', board=b, position=0),
+             List(name='To try', board=b, position=1),
+             List(name='Accepted', board=b, position=2),
              )
     [l.save() for l in lists]

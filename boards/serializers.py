@@ -11,13 +11,14 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
-        fields = ['id', 'link', 'poster', 'description', 'list', 'score', ]
+        fields = ['id', 'link', 'poster', 'description', 'list', 'score', 'board']
 
     def validate_board(self, value):
         if not value and not self.instance:  # this is create, but value is not sent
             raise serializers.ValidationError('Board is required on create.')
         elif value and self.instance:
             raise serializers.ValidationError('Song can\'t be moved to other board.')
+        return value
 
     def validate_list(self, value):
         if self.instance:  # this is create, not update.
