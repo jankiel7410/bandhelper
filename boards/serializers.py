@@ -40,10 +40,10 @@ class SongSerializer(serializers.ModelSerializer):
 
 
 class ListSerializer(serializers.ModelSerializer):
-
+    songs = SongSerializer(many=True)
     class Meta:
         model = List
-        fields = ['id', 'name', 'position']
+        fields = ['id', 'name', 'position', 'songs']
 
 
 class BoardSerializer(serializers.ModelSerializer):
