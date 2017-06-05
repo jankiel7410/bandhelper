@@ -23,12 +23,12 @@ class Board(models.Model):
 
 
 class List(models.Model):
-    name = models.CharField(max_length=30)
+    title = models.CharField(max_length=30)
     board = models.ForeignKey('boards.Board', related_name='lists')
     position = models.PositiveSmallIntegerField()
 
     def __str__(self):
-        return '#{} {}'.format(self.id, self.name)
+        return '#{} {}'.format(self.id, self.title)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.id:
