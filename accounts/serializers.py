@@ -46,6 +46,7 @@ class SessionSerializer(serializers.Serializer):
 
 class VoteSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Vote
         fields = ('user', 'song', 'score', )
@@ -56,5 +57,6 @@ class VoteSerializer(serializers.ModelSerializer):
         return score
 
     def save(self, **kwargs):
+        self.instance = Vote.objects.filter(song=self.validated_data['song'], user=self.context['user']).first()
         kwargs['user_id'] = self.context['user'].id
         return super().save(**kwargs)
