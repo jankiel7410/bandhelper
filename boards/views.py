@@ -3,7 +3,7 @@ from rest_framework import viewsets
 
 from .models import Song, Board, BoardMembership
 from .serializers import SongSerializer, BoardSerializer, MembershipSerializer
-from .permissions import IsAuthenticatedOrReadOnly, IsPosterOrAdmin, IsAdmin
+from .permissions import IsAuthenticatedOrReadOnly, IsPosterOrAdmin, IsAdmin, CanInvite
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -29,7 +29,7 @@ class BoardViewSet(viewsets.ModelViewSet):
 class MembershipViewSet(viewsets.ModelViewSet):
     queryset = BoardMembership.objects.all()
     serializer_class = MembershipSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, IsAdmin, )
+    permission_classes = (IsAuthenticatedOrReadOnly, CanInvite, )
 
-    def get_object(self):
-        return self.get_queryset().filter(admin_id=self.kwargs['pk']).first()
+    def get_serializer_context(self):
+        return {'user': self.request.user}

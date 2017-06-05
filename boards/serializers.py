@@ -7,7 +7,7 @@ class SongSerializer(serializers.ModelSerializer):
     score = serializers.FloatField(read_only=True)
     poster = serializers.PrimaryKeyRelatedField(read_only=True)
     board = serializers.PrimaryKeyRelatedField(allow_null=True, write_only=True, queryset=Board.objects.all())  # only when creating Song
-    list = serializers.PrimaryKeyRelatedField(allow_null=True, queryset=List.objects.all())  # only Admin can use this field
+    list = serializers.PrimaryKeyRelatedField(allow_null=True, queryset=List.objects.all(), required=False)  # only Admin can use this field
 
     class Meta:
         model = Song
@@ -68,5 +68,8 @@ class MembershipSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'board']
 
     def validate(self, attrs):
-        if attrs['user'].id != attrs['board'].admin_id:
+        if attrs['user'].id == self.context['user'].id:
+            raise serializers.ValidationError('Only can\'t invite yourself...')
+        if self.context['user'].id != attrs['board'].admin_id:
             raise serializers.ValidationError('Only admin of this board can add members.')
+        return attrs
