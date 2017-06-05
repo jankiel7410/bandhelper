@@ -65,8 +65,9 @@ def setup_default_board(sender, instance, created, **kwargs):
     user = instance
     b = Board(admin=user, name='My board')
     b.save()
-    lists = (List(name='Propositions', board=b, position=0),
-             List(name='To try', board=b, position=1),
-             List(name='Accepted', board=b, position=2),
+    lists = (List(title='Propositions', board=b, position=0),
+             List(title='To try', board=b, position=1),
+             List(title='Accepted', board=b, position=2),
              )
     [l.save() for l in lists]
+    BoardMembership.objects.create(user=user, board=Board.objects.order_by('id').first())
