@@ -7,11 +7,11 @@ class SongSerializer(serializers.ModelSerializer):
     score = serializers.FloatField(read_only=True)
     poster = serializers.PrimaryKeyRelatedField(read_only=True)
     board = serializers.PrimaryKeyRelatedField(allow_null=True, write_only=True, queryset=Board.objects.all())  # only when creating Song
-    list = serializers.PrimaryKeyRelatedField(allow_null=True, queryset=List.objects.all())  # only Admin can use this field
+    list = serializers.PrimaryKeyRelatedField(allow_null=True, queryset=List.objects.all(), required=False)  # only Admin can use this field
 
     class Meta:
         model = Song
-        fields = ['id', 'link', 'poster', 'description', 'list', 'score', 'board']
+        fields = ['id', 'link', 'poster', 'description', 'list', 'score', 'board', 'title']
 
     def validate_board(self, value):
         if not value and not self.instance:  # this is create, but value is not sent
@@ -21,10 +21,15 @@ class SongSerializer(serializers.ModelSerializer):
         return value
 
     def validate_list(self, value):
-        if self.instance:  # this is create, not update.
-            if not value:
-                raise serializers.ValidationError('You must move card somewhere')
+        if not self.instance:  # this is create, not update.
             return value
+
+        if not value:
+            raise serializers.ValidationError('You must move card somewhere')
+        if self.instance.list.board_id != value.board_id:
+            raise serializers.ValidationError('You can\'t move cards between boards')
+        if self.instance.list_id != value.id and value.board.admin_id != self.context['user'].id:
+            raise serializers.ValidationError('Only admin can move card between lanes.')
         return value
 
     def validate(self, attrs):
@@ -37,6 +42,8 @@ class SongSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('You don\'t have right to add a song to this board.')
 
             attrs['list'] = List.objects.get(board=board, position=0)
+            del attrs['board']
+        return attrs
 
 
 class ListSerializer(serializers.ModelSerializer):
@@ -45,15 +52,15 @@ class ListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = List
-        fields = ['id', 'title', 'position', 'songs']
+        fields = ['id', 'title', 'position', 'cards']
 
 
 class BoardSerializer(serializers.ModelSerializer):
-    lists = ListSerializer(many=True, source='get_lists', read_only=True)
+    lanes = ListSerializer(many=True, source='get_lists', read_only=True)
 
     class Meta:
         model = Board
-        fields = ['admin', 'name', 'lists', ]
+        fields = ['admin', 'name', 'lanes', ]
 
 
 class MembershipSerializer(serializers.ModelSerializer):
@@ -61,3 +68,10 @@ class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = BoardMembership
         fields = ['id', 'user', 'board']
+
+    def validate(self, attrs):
+        if attrs['user'].id == self.context['user'].id:
+            raise serializers.ValidationError('Only can\'t invite yourself...')
+        if self.context['user'].id != attrs['board'].admin_id:
+            raise serializers.ValidationError('Only admin of this board can add members.')
+        return attrs

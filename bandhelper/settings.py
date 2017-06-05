@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'boards.middleware.DisableCsrfCheck',
 ]
 MIDDLEWARE += [  # Or MIDDLEWARE_CLASSES on Django < 1.10
     'corsheaders.middleware.CorsMiddleware',
