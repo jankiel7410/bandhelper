@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from accounts import models
 from accounts import serializers
+from accounts.filters import UserFilter
 from boards.permissions import IsAuthenticatedOrReadOnly, IsPosterOrAdmin
 
 
@@ -22,7 +23,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
     filter_backends = (DjangoFilterBackend, )
-    filter_fields = ['username', ]
+    filter_class = UserFilter
 
 
 class SessionViewSet(viewsets.mixins.CreateModelMixin, viewsets.GenericViewSet):
