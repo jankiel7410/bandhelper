@@ -7,11 +7,11 @@ class SongSerializer(serializers.ModelSerializer):
     score = serializers.FloatField(read_only=True)
     poster = serializers.PrimaryKeyRelatedField(read_only=True)
     board = serializers.PrimaryKeyRelatedField(allow_null=True, write_only=True, queryset=Board.objects.all())  # only when creating Song
-    list = serializers.PrimaryKeyRelatedField(allow_null=True, queryset=List.objects.all(), required=False)  # only Admin can use this field
+    lane = serializers.PrimaryKeyRelatedField(source='list', allow_null=True, queryset=List.objects.all(), required=False)  # only Admin can use this field
 
     class Meta:
         model = Song
-        fields = ['id', 'link', 'poster', 'description', 'list', 'score', 'board', 'title']
+        fields = ['id', 'link', 'poster', 'description', 'lane', 'score', 'board', 'title']
 
     def validate_board(self, value):
         if not value and not self.instance:  # this is create, but value is not sent
@@ -20,7 +20,7 @@ class SongSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Song can\'t be moved to other board.')
         return value
 
-    def validate_list(self, value):
+    def validate_lane(self, value):
         if not self.instance:  # this is create, not update.
             return value
 

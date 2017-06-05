@@ -9,9 +9,9 @@ from django.db import migrations
 
 def migrate(apps, editor):
     List = apps.get_model('boards', 'List')
-    List.objects.filter(name='Propositions').update(position=0)
-    List.objects.filter(name='To try').update(position=1)
-    List.objects.filter(name='Accepted').update(position=2)
+    List.objects.filter(title='Propositions').update(position=0)
+    List.objects.filter(title='To try').update(position=1)
+    List.objects.filter(title='Accepted').update(position=2)
 
 
 class Migration(migrations.Migration):
