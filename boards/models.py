@@ -49,7 +49,6 @@ class Song(models.Model):
     list = models.ForeignKey('boards.List', related_name='songs')
 
     @property
-    @lru_cache(maxsize=128)
     def score(self):
         res = self.votes.aggregate(models.Avg('score'))
         return res['score__avg'] or 0
