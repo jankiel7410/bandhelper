@@ -48,7 +48,7 @@ class SongSerializer(serializers.ModelSerializer):
 
 class ListSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True)
-    songs = SongSerializer(many=True)
+    cards = SongSerializer(many=True, source='songs')
 
     class Meta:
         model = List
