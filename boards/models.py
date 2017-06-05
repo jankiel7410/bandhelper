@@ -21,6 +21,9 @@ class Board(models.Model):
     def get_lists(self):
         return self.lists.order_by('position')
 
+    def __str__(self):
+        return '%s\'s board: "%s"' % (self.admin, self.name)
+
 
 class List(models.Model):
     name = models.CharField(max_length=30)
@@ -33,8 +36,8 @@ class List(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.id:
             current_max = List.objects.filter(board_id=self.board_id).aggregate(models.Max('position'))
-            pos = 0 if current_max['position__max'] is None else current_max['position__max']
-            self.position = pos + 1
+            pos = 0 if current_max['position__max'] is None else current_max['position__max'] + 1
+            self.position = pos
         super().save(force_insert, force_update, using, update_fields)
 
 
