@@ -20,3 +20,12 @@ class IsAdmin(BasePermission):
             return True
 
         return request.user.id == song.list.board.admin_id
+
+
+class CanInvite(BasePermission):
+
+    def has_object_permission(self, request, view, membership):
+        if request.method in ['GET', 'OPTIONS', ]:
+            return True
+
+        return request.user.id == membership.board.admin_id

@@ -66,3 +66,7 @@ class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = BoardMembership
         fields = ['id', 'user', 'board']
+
+    def validate(self, attrs):
+        if attrs['user'].id != attrs['board'].admin_id:
+            raise serializers.ValidationError('Only admin of this board can add members.')
