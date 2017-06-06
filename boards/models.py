@@ -47,11 +47,12 @@ class Song(models.Model):
     description = models.TextField(max_length=2000, blank=True, null=True)
     poster = models.ForeignKey('auth.User', related_name='posted_songs')
     list = models.ForeignKey('boards.List', related_name='songs')
+    score = models.FloatField(default=0.0)
 
-    @property
-    def score(self):
+    def refresh_score(self):
         res = self.votes.aggregate(models.Avg('score'))
-        return res['score__avg'] or 0
+        self.score = res['score__avg'] or 0
+        self.save()
 
     def __str__(self):
         return 'Song #{}: {}'.format(self.id, self.link)

@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 
 class Vote(models.Model):
@@ -8,3 +10,8 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('user', 'song',)
+
+
+@receiver([post_save, post_delete], sender=Vote)
+def refresh_avg_score(sender, instance, **kwargs):
+    instance.song.refresh_score()
