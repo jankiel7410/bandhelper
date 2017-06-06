@@ -57,6 +57,9 @@ class Song(models.Model):
     def __str__(self):
         return 'Song #{}: {}'.format(self.id, self.link)
 
+    class Meta:
+        ordering = ['-score']
+
 
 @receiver(post_save, sender=User)
 def setup_default_board(sender, instance, created, **kwargs):
